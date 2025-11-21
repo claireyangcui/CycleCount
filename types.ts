@@ -6,11 +6,19 @@ export enum ProcessingStatus {
   ERROR = 'ERROR'
 }
 
+export interface BoundingBox {
+  ymin: number;
+  xmin: number;
+  ymax: number;
+  xmax: number;
+}
+
 export interface BikeDetection {
   frameColor: string;
   fenderColor: string;
   type: 'Main' | 'Background';
   category: 'Road' | 'Mountain' | 'City' | 'Other';
+  boundingBox?: BoundingBox;
 }
 
 export interface InventoryItem {

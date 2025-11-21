@@ -3,23 +3,33 @@ import { BikeDetection } from '../types';
 
 // Helper to fetch image and convert to base64
 async function urlToBase64(url: string): Promise<string> {
+  console.log(`[Gemini Service] Fetching image: ${url}`);
   try {
-    const response = await fetch(url, { mode: 'cors' });
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+    const response = await fetch(url, { mode: 'cors', signal: controller.signal });
+    clearTimeout(id);
+
     if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
     const blob = await response.blob();
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64 = reader.result as string;
-        // Strip the data url prefix (e.g., "data:image/jpeg;base64,")
+        console.log(`[Gemini Service] Image converted to base64`);
         const data = base64.split(',')[1];
         resolve(data);
       };
-      reader.onerror = reject;
+      reader.onerror = (e) => {
+        console.error("[Gemini Service] FileReader error", e);
+        reject(e);
+      };
+      reader.readAsDataURL(blob);
     });
   } catch (error) {
-    console.error("Image fetch error", error);
-    throw new Error("CORS or Network Error: Could not fetch image. Ensure the image server supports CORS.");
+    console.error("[Gemini Service] Image fetch error", error);
+    throw new Error(`CORS or Network Error: Could not fetch image. ${error instanceof Error ? error.message : ''}`);
   }
 }
 
@@ -33,6 +43,7 @@ export const analyzeImage = async (imageUrl: string): Promise<BikeDetection[]> =
 
   const base64Image = await urlToBase64(imageUrl);
 
+  console.log("[Gemini Service] Sending request to Gemini...");
   const response = await ai.models.generateContent({
     model: 'gemini-2.5-flash',
     contents: {
@@ -55,6 +66,7 @@ export const analyzeImage = async (imageUrl: string): Promise<BikeDetection[]> =
           - Frame Color: (e.g. Blue, Green, Black, Silver)
           - Fender Color: (Look closely at the mudguards/fenders. If absent, use "No Fender". If unsure/hidden, "Unknown")
           - Category: (Road, Mountain, City, Hybrid)
+          - Bounding Box: Return the bounding box [ymin, xmin, ymax, xmax] for the bike.
           `
         }
       ]
@@ -72,7 +84,16 @@ export const analyzeImage = async (imageUrl: string): Promise<BikeDetection[]> =
                 frameColor: { type: Type.STRING },
                 fenderColor: { type: Type.STRING },
                 type: { type: Type.STRING, enum: ["Main", "Background"] },
-                category: { type: Type.STRING, enum: ["Road", "Mountain", "City", "Other"] }
+                category: { type: Type.STRING, enum: ["Road", "Mountain", "City", "Other"] },
+                boundingBox: {
+                  type: Type.OBJECT,
+                  properties: {
+                    ymin: { type: Type.NUMBER },
+                    xmin: { type: Type.NUMBER },
+                    ymax: { type: Type.NUMBER },
+                    xmax: { type: Type.NUMBER }
+                  }
+                }
               }
             }
           }
