@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CycleCount AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              background: '#0B0C0E', // Linear Dark
+              sidebar: '#0B0C0E',
+              surface: '#141517',
+              surfaceHover: '#1C1E21',
+              border: '#2E2F33',
+              primary: '#5E6AD2', // Linear Blurple
+              primaryHover: '#727BE0',
+              textMain: '#F7F8F8',
+              textMuted: '#8A8F98',
+              success: '#4CC38A',
+              warning: '#E8C600',
+              danger: '#E5484D'
+            },
+            fontSize: {
+                xs: ['11px', '16px'],
+                sm: ['13px', '20px'],
+                base: ['14px', '24px'],
+                lg: ['16px', '28px'],
+                xl: ['20px', '28px'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #0B0C0E;
+        color: #F7F8F8;
+        -webkit-font-smoothing: antialiased;
+      }
+      /* Linear Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #2E2F33;
+        border-radius: 5px;
+        border: 2px solid #0B0C0E; /* Creates padding effect */
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #43444A;
+      }
+      
+      /* Remove default outline and use custom focus ring for that snappy feel */
+      :focus-visible {
+        outline: 2px solid #5E6AD2;
+        outline-offset: 2px;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.4.1"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
